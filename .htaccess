@@ -1,0 +1,50 @@
+SetEnv APPLICATION_ENV production
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
+
+
+# mod_expires
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault A86400    
+  ExpiresByType image/x-icon A2592000
+  ExpiresByType application/x-javascript A2592000
+  ExpiresByType text/css A2592000
+  ExpiresByType image/gif A604800
+  ExpiresByType image/png A604800
+  ExpiresByType image/jpeg A604800
+  ExpiresByType text/plain A604800
+  ExpiresByType application/x-shockwave-flash A604800
+  ExpiresByType video/x-flv A604800
+  ExpiresByType application/pdf A604800
+  ExpiresByType text/html A900
+</IfModule>
+
+# 1 YEAR
+<FilesMatch "\.(ico|pdf|flv)$">
+Header set Cache-Control "max-age=29030400, public"
+</FilesMatch>
+# 1 WEEK
+<FilesMatch "\.(jpg|jpeg|png|gif|swf)$">
+Header set Cache-Control "max-age=604800, public"
+</FilesMatch>
+# 2 DAYS
+<FilesMatch "\.(xml|txt|css|js)$">
+Header set Cache-Control "max-age=172800, proxy-revalidate"
+</FilesMatch>
+
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml
+  SetOutputFilter DEFLATE
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSI[E] !no-gzip !gzip-only-text/html
+  SetEnvIfNoCase Request_URI \.(?:gif|png)$ no-gzip dont-vary
+  Header append Vary User-Agent env=!dont-vary
+</IfModule>
+
